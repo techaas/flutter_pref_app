@@ -32,25 +32,36 @@ class SharedPreferencesDemo extends StatefulWidget {
 
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<int> _counter;
+  int _counter = 0;
+  String host_name = '';
 
-  Future<void> _incrementCounter() async {
-    final SharedPreferences prefs = await _prefs;
-    final int counter = (prefs.getInt('counter') ?? 0) + 1;
-
+  void _incrementCounter() {
     setState(() {
-      _counter = prefs.setInt("counter", counter).then((bool success) {
-        return counter;
+      _counter++;
+    });
+  }
+
+  void _cancelPressed() {
+    _loadCounter();
+  }
+
+  _loadCounter() async {
+    _prefs.then((SharedPreferences prefs) {
+      setState(() {
+        _counter = prefs.getInt('counter');
       });
     });
+  }
+
+  void _okPressed() async {
+    SharedPreferences prefs = await _prefs;
+    prefs.setInt('counter', _counter);
   }
 
   @override
   void initState() {
     super.initState();
-    _counter = _prefs.then((SharedPreferences prefs) {
-      return (prefs.getInt('counter') ?? 0);
-    });
+    _loadCounter();
   }
 
   @override
@@ -59,24 +70,43 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
       appBar: AppBar(
         title: const Text("SharedPreferences Demo"),
       ),
-      body: Center(
-          child: FutureBuilder<int>(
-              future: _counter,
-              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const CircularProgressIndicator();
-                  default:
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Text(
-                        'Button tapped ${snapshot.data} time${snapshot.data == 1 ? '' : 's'}.\n\n'
-                        'This should persist across restarts.',
-                      );
-                    }
-                }
-              })),
+      body: Stack(children: <Widget>[
+        Container(
+          color: Color.fromARGB(32, 0, 255, 255),
+        ),
+        Container(
+            padding: EdgeInsets.all(10),
+            alignment: Alignment.topRight,
+            // color: Color.fromARGB(32, 255, 255, 0),
+            child: Container(
+                padding: EdgeInsets.all(15),
+                width: 400.0,
+                height: 200.0,
+                color: Color.fromARGB(128, 255, 255, 0),
+                child: Column(children: <Widget>[
+                  Text(
+                    'You have pushed the button this many times:',
+                  ),
+                  Expanded(
+                      child: Text(
+                    '$_counter',
+                    style: Theme.of(context).textTheme.headline5,
+                  )),
+                  ButtonBar(
+                    alignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new TextButton(
+                        child: new Text('Cancel'),
+                        onPressed: _cancelPressed,
+                      ),
+                      new ElevatedButton(
+                        child: new Text('OK'),
+                        onPressed: _okPressed,
+                      ),
+                    ],
+                  ),
+                ])))
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
