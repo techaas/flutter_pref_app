@@ -1,9 +1,5 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// ignore_for_file: public_member_api_docs
-
+// Copyright 2021, Techaas.com. All rights reserved.
+//
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -32,8 +28,8 @@ class SharedPreferencesDemo extends StatefulWidget {
 
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   int _counter = 0;
-  String host_name = '';
 
   void _incrementCounter() {
     setState(() {

@@ -1,6 +1,6 @@
 # pref_app
 
-A new Flutter project.
+Flutter で SharedPreference を使うサンプル
 
 ## Getting Started
 
